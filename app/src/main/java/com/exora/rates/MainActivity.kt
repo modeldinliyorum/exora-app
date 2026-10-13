@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.shape.CornerFamily
+import com.google.android.material.shape.ShapeAppearanceModel
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -137,7 +139,9 @@ class MainActivity : AppCompatActivity() {
                 setChipIconVisible(false)
                 setCheckedIconVisible(false)
                 chipMinHeight = dp(38).toFloat()
-                chipCornerRadius = dp(19).toFloat()
+                shapeAppearanceModel = ShapeAppearanceModel.builder()
+                    .setAllCorners(CornerFamily.ROUNDED, dp(19).toFloat())
+                    .build()
                 chipStrokeWidth = dp(1).toFloat()
                 chipStartPadding = dp(16).toFloat()
                 chipEndPadding = dp(16).toFloat()
