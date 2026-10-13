@@ -31,7 +31,7 @@ Grab the latest APK from the [**Releases**](https://github.com/modeldinliyorum/e
 - **Auto-refresh every 10 minutes** in the background.
 - **Last update time** shown in the top bar, with a live/offline indicator dot.
 - **Offline-friendly** — the last successful rates are cached and shown.
-- Free, no-key API with automatic **fallback** to a mirror.
+- Live, no-key FX rates with automatic **fallback** to daily mirrors.
 - **Only the `INTERNET`** permission.
 - Edge-to-edge with transparent status/navigation bars and correct insets.
 - **Signed release build** — minified and resource-shrunk with R8.
@@ -39,15 +39,15 @@ Grab the latest APK from the [**Releases**](https://github.com/modeldinliyorum/e
 
 ## Data source
 
-Primary: `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/try.json`
-Fallback: `https://latest.currency-api.pages.dev/v1/currencies/try.json`
+Live: `https://api.fxratesapi.com/latest?base=TRY` — free, no key, updates continuously.
+Fallbacks: `https://latest.currency-api.pages.dev/v1/currencies/try.json` and
+`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/try.json`.
 
-Both mirrors serve the same free, no-key API, but a CDN can lag a day behind the
-origin. So the app fetches **both** and keeps whichever reports the **newest `date`**
-— always showing the freshest available data, whichever mirror is current. If only
-one is reachable, that one is used.
+The app prefers the **live** feed for up-to-date, accurate rates. If it is unreachable
+it falls back to the daily mirrors, using whichever reports the **newest `date`** (a
+CDN can lag a day behind the origin). If only one is reachable, that one is used.
 
-The API returns "1 TRY = X <currency>". The app derives any base with cross rates:
+All sources return "1 TRY = X <currency>". The app derives any base with cross rates:
 `1 CODE = (perTry[base] / perTry[code]) BASE`. So one payload powers every base
 selection, and switching base is instant and offline-safe.
 

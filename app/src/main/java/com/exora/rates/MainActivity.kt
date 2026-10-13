@@ -200,11 +200,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Both mirrors serve the same API, but one CDN can lag a day behind the other,
-     * so fetch both and keep whichever reports the newest date. If only one is
-     * reachable, use that one.
+     * Prefer a live FX source (accurate, updates continuously). If it is
+     * unreachable, fall back to the daily mirrors, keeping whichever of the two
+     * reports the newest date (a CDN can lag a day behind the origin).
      */
     private fun fetchFreshest(): Rates? {
+        fetchUrl(LIVE_URL)?.let { parseLive(it) }?.let { return it }
         val candidates = ArrayList<Rates>(2)
         fetchUrl(PRIMARY_URL)?.let { parse(it)?.let(candidates::add) }
         fetchUrl(FALLBACK_URL)?.let { parse(it)?.let(candidates::add) }
@@ -255,6 +256,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /** Parse the live source: {"base":"TRY","date":..,"rates":{"USD":..,"EUR":..}}. */
+    private fun parseLive(json: String): Rates? {
+        return try {
+            val root = JSONObject(json)
+            val rates = root.getJSONObject("rates")
+            val out = HashMap<String, Double>()
+            out["TRY"] = 1.0
+            for (code in Currencies.ORDER) {
+                if (code == "TRY") continue
+                val v = rates.optDouble(code, Double.NaN)
+                if (!v.isNaN() && v > 0) out[code] = v
+            }
+            if (out.size < 5) null else Rates(root.optString("date", ""), json, out)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     private fun fetchUrl(url: String): String? {
         var conn: HttpURLConnection? = null
         return try {
@@ -285,6 +304,7 @@ class MainActivity : AppCompatActivity() {
     private data class Rates(val date: String, val raw: String, val values: Map<String, Double>)
 
     companion object {
+        private const val LIVE_URL = "https://api.fxratesapi.com/latest?base=TRY"
         private const val PRIMARY_URL =
             "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/try.json"
         private const val FALLBACK_URL =
