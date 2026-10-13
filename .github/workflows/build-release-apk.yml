@@ -1,4 +1,4 @@
-name: Build Debug APK
+name: Build Release APK
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build:
-    name: Build debug APK
+    name: Build release APK
     runs-on: ubuntu-latest
 
     steps:
@@ -34,12 +34,22 @@ jobs:
         with:
           gradle-version: '8.7'
 
-      - name: Build debug APK
-        run: gradle assembleDebug --no-daemon --stacktrace
+      - name: Decode release keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/exora-release.p12"
 
-      - name: Upload debug APK
+      - name: Build release APK
+        env:
+          EXORA_KEYSTORE: ${{ runner.temp }}/exora-release.p12
+          EXORA_KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          EXORA_KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          EXORA_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: gradle assembleRelease --no-daemon --stacktrace
+
+      - name: Upload release APK
         uses: actions/upload-artifact@v4
         with:
-          name: exora-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: exora-release-apk
+          path: app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error

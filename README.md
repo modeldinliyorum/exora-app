@@ -11,13 +11,13 @@ rate below is recalculated against it.
 
 Grab the latest APK from the [**Releases**](https://github.com/modeldinliyorum/exora-app/releases) page and install it directly on your Android device:
 
-1. Open the [Releases](https://github.com/modeldinliyorum/exora-app/releases) page and download **`app-debug.apk`** from the newest release.
+1. Open the [Releases](https://github.com/modeldinliyorum/exora-app/releases) page and download **`app-release.apk`** from the newest release.
 2. On your phone, open **Settings → Apps → Special access → Install unknown apps** and allow your browser or file manager.
-3. Tap the downloaded **`app-debug.apk`** and confirm the install.
+3. Tap the downloaded **`app-release.apk`** and confirm the install.
 4. Launch **Exora** — no account and no setup, rates load immediately.
 
 > Prefer to build it yourself? See [Building](#building). Every successful CI run also
-> attaches the APK as the `exora-debug-apk` artifact.
+> attaches the APK as the `exora-release-apk` artifact.
 
 ## Features
 
@@ -34,6 +34,7 @@ Grab the latest APK from the [**Releases**](https://github.com/modeldinliyorum/e
 - Free, no-key API with automatic **fallback** to a mirror.
 - **Only the `INTERNET`** permission.
 - Edge-to-edge with transparent status/navigation bars and correct insets.
+- **Signed release build** — minified and resource-shrunk with R8.
 - Kotlin, `minSdk 26`, `targetSdk 35`, `compileSdk 35`.
 
 ## Data source
@@ -54,23 +55,24 @@ call powers every base selection, and switching base is instant and offline-safe
 ## Building
 
 The APK is built in the cloud — **no local build is needed or expected**.
-See `.github/workflows/build-apk.yml`: runs on `ubuntu-latest`, builds the **debug**
-APK and uploads it as the `exora-debug-apk` artifact.
+See `.github/workflows/build-release-apk.yml`: runs on `ubuntu-latest`, builds the
+**signed release** APK and uploads it as the `exora-release-apk` artifact. The signing
+key is injected from encrypted repository secrets at build time.
 
 ### How to run the workflow
 
 1. Open the repository on GitHub.
 2. Go to the **Actions** tab.
-3. Select **Build Debug APK** in the left sidebar.
+3. Select **Build Release APK** in the left sidebar.
 4. Click **Run workflow** → choose the `main` branch → **Run workflow**.
    (It also runs automatically on every push to `main`.)
 
 ### How to get the APK
 
-- **Releases (recommended):** download `app-debug.apk` from the
+- **Releases (recommended):** download `app-release.apk` from the
   [Releases](https://github.com/modeldinliyorum/exora-app/releases) page.
-- **CI artifact:** open the completed run and download **exora-debug-apk** from the
-  **Artifacts** section at the bottom — it contains `app-debug.apk`.
+- **CI artifact:** open the completed run and download **exora-release-apk** from the
+  **Artifacts** section at the bottom — it contains `app-release.apk`.
 
 Install it on a device with "Install unknown apps" enabled.
 
@@ -78,7 +80,7 @@ Install it on a device with "Install unknown apps" enabled.
 
 ```
 exora-app/
-├── .github/workflows/build-apk.yml
+├── .github/workflows/build-release-apk.yml
 ├── build.gradle.kts / settings.gradle.kts / gradle.properties
 ├── PRODUCT.md / DESIGN.md / README.md / LICENSE
 └── app/

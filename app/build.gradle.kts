@@ -16,9 +16,24 @@ android {
         versionName = "2.0"
     }
 
+    signingConfigs {
+        val keystorePath = System.getenv("EXORA_KEYSTORE")
+        if (keystorePath != null) {
+            create("release") {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("EXORA_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("EXORA_KEY_ALIAS")
+                keyPassword = System.getenv("EXORA_KEY_PASSWORD")
+                storeType = "PKCS12"
+            }
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.findByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
