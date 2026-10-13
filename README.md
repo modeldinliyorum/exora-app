@@ -42,9 +42,14 @@ Grab the latest APK from the [**Releases**](https://github.com/modeldinliyorum/e
 Primary: `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/try.json`
 Fallback: `https://latest.currency-api.pages.dev/v1/currencies/try.json`
 
-The API returns "1 TRY = X <currency>". The app fetches this once and derives any
-base with cross rates: `1 CODE = (perTry[base] / perTry[code]) BASE`. So one network
-call powers every base selection, and switching base is instant and offline-safe.
+Both mirrors serve the same free, no-key API, but a CDN can lag a day behind the
+origin. So the app fetches **both** and keeps whichever reports the **newest `date`**
+— always showing the freshest available data, whichever mirror is current. If only
+one is reachable, that one is used.
+
+The API returns "1 TRY = X <currency>". The app derives any base with cross rates:
+`1 CODE = (perTry[base] / perTry[code]) BASE`. So one payload powers every base
+selection, and switching base is instant and offline-safe.
 
 ## Dependencies (kept small)
 

@@ -169,8 +169,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun renderFromCache() {
         val cached = prefs.getString(KEY_JSON, null) ?: return
-        val parsed = parse(cached) ?: return
-        perTry = parsed
+        val rates = parse(cached) ?: return
+        perTry = rates.values
         lastUpdate = prefs.getLong(KEY_TIME, 0L)
         render()
         updateStatus()
@@ -179,16 +179,15 @@ class MainActivity : AppCompatActivity() {
     private fun fetch() {
         setStatus("Updating\u2026", live = false)
         executor.execute {
-            val json = fetchUrl(PRIMARY_URL) ?: fetchUrl(FALLBACK_URL)
-            val parsed = json?.let { parse(it) }
+            val best = fetchFreshest()
             handler.post {
                 swipe.isRefreshing = false
-                if (json != null && parsed != null) {
-                    perTry = parsed
+                if (best != null) {
+                    perTry = best.values
                     lastUpdate = System.currentTimeMillis()
                     online = true
                     prefs.edit()
-                        .putString(KEY_JSON, json)
+                        .putString(KEY_JSON, best.raw)
                         .putLong(KEY_TIME, lastUpdate)
                         .apply()
                     render()
@@ -198,6 +197,18 @@ class MainActivity : AppCompatActivity() {
                 updateStatus()
             }
         }
+    }
+
+    /**
+     * Both mirrors serve the same API, but one CDN can lag a day behind the other,
+     * so fetch both and keep whichever reports the newest date. If only one is
+     * reachable, use that one.
+     */
+    private fun fetchFreshest(): Rates? {
+        val candidates = ArrayList<Rates>(2)
+        fetchUrl(PRIMARY_URL)?.let { parse(it)?.let(candidates::add) }
+        fetchUrl(FALLBACK_URL)?.let { parse(it)?.let(candidates::add) }
+        return candidates.maxByOrNull { it.date }
     }
 
     /** Rebuild the visible list for the current base, animating the change. */
@@ -227,9 +238,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     /** Parse try.json into "amount of <code> per 1 TRY". TRY itself is 1.0. */
-    private fun parse(json: String): Map<String, Double>? {
+    private fun parse(json: String): Rates? {
         return try {
-            val obj = JSONObject(json).getJSONObject("try")
+            val root = JSONObject(json)
+            val obj = root.getJSONObject("try")
             val out = HashMap<String, Double>()
             out["TRY"] = 1.0
             for (code in Currencies.ORDER) {
@@ -237,7 +249,7 @@ class MainActivity : AppCompatActivity() {
                 val v = obj.optDouble(code.lowercase(Locale.US), Double.NaN)
                 if (!v.isNaN() && v > 0) out[code] = v
             }
-            if (out.size <= 1) null else out
+            if (out.size <= 1) null else Rates(root.optString("date", ""), json, out)
         } catch (e: Exception) {
             null
         }
@@ -268,6 +280,9 @@ class MainActivity : AppCompatActivity() {
         SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date(ts))
 
     private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
+
+    /** A parsed payload: the API's data date, its raw JSON, and per-TRY amounts. */
+    private data class Rates(val date: String, val raw: String, val values: Map<String, Double>)
 
     companion object {
         private const val PRIMARY_URL =
