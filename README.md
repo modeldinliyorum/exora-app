@@ -7,6 +7,18 @@ rate below is recalculated against it.
 - Base **TRY** → `1 USD = 49.37 TRY`, `1 EUR = 55.17 TRY`, …
 - Base **EUR** → `1 USD = 0.89 EUR`, `1 TRY = 0.018 EUR`, …
 
+## Download & install
+
+Grab the latest APK from the [**Releases**](https://github.com/modeldinliyorum/exora-app/releases) page and install it directly on your Android device:
+
+1. Open the [Releases](https://github.com/modeldinliyorum/exora-app/releases) page and download **`app-debug.apk`** from the newest release.
+2. On your phone, open **Settings → Apps → Special access → Install unknown apps** and allow your browser or file manager.
+3. Tap the downloaded **`app-debug.apk`** and confirm the install.
+4. Launch **Exora** — no account and no setup, rates load immediately.
+
+> Prefer to build it yourself? See [Building](#building). Every successful CI run also
+> attaches the APK as the `exora-debug-apk` artifact.
+
 ## Features
 
 - **Pure-black, Material 3 dark theme** with raised cards and hairline strokes.
@@ -53,12 +65,14 @@ APK and uploads it as the `exora-debug-apk` artifact.
 4. Click **Run workflow** → choose the `main` branch → **Run workflow**.
    (It also runs automatically on every push to `main`.)
 
-### How to download the APK
+### How to get the APK
 
-1. Wait for the run to finish (green check).
-2. Open the completed run and scroll to the **Artifacts** section at the bottom.
-3. Download **exora-debug-apk** — it contains `app-debug.apk`.
-4. Install it on a device with "Install unknown apps" enabled.
+- **Releases (recommended):** download `app-debug.apk` from the
+  [Releases](https://github.com/modeldinliyorum/exora-app/releases) page.
+- **CI artifact:** open the completed run and download **exora-debug-apk** from the
+  **Artifacts** section at the bottom — it contains `app-debug.apk`.
+
+Install it on a device with "Install unknown apps" enabled.
 
 ## Project layout
 
@@ -66,7 +80,7 @@ APK and uploads it as the `exora-debug-apk` artifact.
 exora-app/
 ├── .github/workflows/build-apk.yml
 ├── build.gradle.kts / settings.gradle.kts / gradle.properties
-├── PRODUCT.md / DESIGN.md / README.md
+├── PRODUCT.md / DESIGN.md / README.md / LICENSE
 └── app/
     ├── build.gradle.kts
     └── src/main/
@@ -82,3 +96,7 @@ exora-app/
             ├── values/{strings,colors,themes}.xml
             └── mipmap-anydpi-v26/ic_launcher.xml
 ```
+
+## License
+
+Released under the [MIT License](LICENSE). © 2026 modeldinliyorum.
