@@ -1,36 +1,50 @@
 # DESIGN
 
-Mode: **Operate** — the user completes a task (reading a number) at a glance.
+Mode: **Operate** — the user reads a number at a glance, then may switch base currency.
 
 ## World
-Pure black, pure white, nothing else. A currency board in the dark. The brief
-pins this: black background, white text, no accent color. Restraint is the style.
+A premium dark "market board". Pure black canvas, softly raised near-black cards,
+one hairline stroke, a single live accent. Monochrome restraint with a green
+liveness dot. Nothing decorative.
 
 ## Tokens
 | Token | Value |
 |---|---|
 | background | `#000000` |
+| surface (card) | `#0E0F11` |
+| surface high | `#16171A` |
+| stroke | `#1E2024` (1dp) |
 | foreground | `#FFFFFF` |
-| muted text | `#99FFFFFF` (60% white) |
-| divider | `#1FFFFFFF` (12% white) |
-| primary value size | 44sp, bold |
-| secondary value size | 26sp, bold |
-| label size | 18sp / 15sp |
+| muted | `#8B9099` |
+| faint | `#5B6068` |
+| live accent | `#34D399` |
 
-Contrast: white on black = 21:1; muted on black ≈ 13:1 — both exceed WCAG AA.
+Contrast: white/black 21:1, muted/black ≈ 6.4:1 — WCAG AA for text.
 
-## Layout
-Single column, 24dp gutters, generous vertical rhythm (spacious dial).
-1. **Primary block (top):** USD, then EUR. Largest type on screen.
-2. Hairline divider.
-3. **Secondary block:** GBP, CHF, JPY, AED, CAD, quieter.
-4. Status line: "Updated HH:mm" / "Offline — showing last saved rates".
+## Typography
+System sans (`sans-serif-medium`) at three tiers, with tabular figures
+(`tnum`) on all numbers so digits align across cards.
+- Rate value: **30sp**
+- Currency code: 18sp
+- Labels/units: 11–12sp, letter-spaced uppercase for section labels.
 
-Each rate is one baseline-aligned line: muted `1 USD =` · bold white number ·
-muted `TRY`. The number carries the hierarchy.
+## Layout (edge-to-edge)
+1. **Top bar** — `EXORA` wordmark + live dot + last-updated time.
+2. **BASE CURRENCY** label + a horizontally scrollable **chip bar** (23 currencies).
+   Selected chip = filled white pill, black text; unselected = near-black with a
+   hairline stroke. This is the primary interaction.
+3. **Rate list** — a `RecyclerView` of raised cards, one per currency:
+   `1 CODE =` (left) … `value` + base unit (right). USD and EUR lead.
+4. **Pull-to-refresh** — swipe down reloads; spinner tinted white.
+
+System status and navigation bars are transparent, content drawn behind them, with
+insets applied as padding to header and list.
 
 ## Motion
-None by design. Values update in place; the status line changes only on refresh.
+- Base switch and refresh animate through `DiffUtil` + a tuned `DefaultItemAnimator`
+  (fade/move, 160–220ms).
+- Chip selection animates via Material's own state change.
+- No ambient or looping motion.
 
 ## Anti-patterns avoided
-No cards, shadows, gradients, icons-as-decoration, or color accents. No emoji.
+No gradients, glass blur, emoji icons, drop-shadow noise, or more than one accent.

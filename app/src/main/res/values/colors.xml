@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
+    <color name="bg">#FF000000</color>
+    <color name="surface">#FF0E0F11</color>
+    <color name="surface_high">#FF16171A</color>
+    <color name="stroke">#FF1E2024</color>
+
     <color name="white">#FFFFFFFF</color>
-    <color name="text_muted">#99FFFFFF</color>
-    <color name="divider">#1FFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="muted">#FF8B9099</color>
+    <color name="faint">#FF5B6068</color>
+    <color name="live">#FF34D399</color>
+
+    <color name="chip_unselected_bg">#FF121316</color>
+    <color name="chip_text_unselected">#FFC6CAD1</color>
+
     <color name="ic_launcher_background">#FF000000</color>
 </resources>

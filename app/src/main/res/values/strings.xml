@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Exora</string>
+    <string name="wordmark">EXORA</string>
+    <string name="base_label">BASE CURRENCY</string>
     <string name="loading">Loading\u2026</string>
 </resources>
